@@ -1,4 +1,4 @@
-jobs = {
+ {
     "Tailor": ["stitching", "sewing", "cutting cloth", "embroidery"],
     "Farmer": ["ploughing", "harvesting", "sowing seeds", "watering crops"],
     "Carpenter": ["wood cutting", "furniture making", "measuring", "hammering"],
