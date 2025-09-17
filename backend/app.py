@@ -1,30 +1,28 @@
-from flask import Flask, request, jsonify, render_template
-import json
-from matching import find_matching_jobs  # function from matching.py
+from flask import Flask, render_template, request
+from matching import load_jobs, match_jobs
 
 app = Flask(__name__)
 
-# Load jobs from JSON file
-with open("jobs.json", "r") as f:
-    jobs = json.load(f)
+# Load job dataset once at startup
+jobs_data = load_jobs("Jobs.json")
 
-# Route for homepage
 @app.route("/")
-def home():
-    return render_template("index.html")  # Make sure templates/index.html exists
+def index():
+    """Render homepage with input form"""
+    return render_template("index.html")
 
-# Route for matching skills
 @app.route("/match", methods=["POST"])
 def match():
-    data = request.get_json()
-    user_skills = data.get("skills", [])
+    """Process user input and show job matches"""
+    user_skills = request.form.get("skills", "")
+    if not user_skills.strip():
+        return render_template("index.html", error="Please enter at least one skill.")
 
-    if not user_skills:
-        return jsonify({"error": "No skills provided"}), 400
+    matches = match_jobs(user_skills, jobs_data)
 
-    matches = find_matching_jobs(user_skills, jobs)
-
-    return jsonify({"matches": matches})
+    return render_template("results.html",
+                           user_skills=user_skills,
+                           matches=matches)
 
 if __name__ == "__main__":
     app.run(debug=True)
