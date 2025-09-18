@@ -1,9 +1,17 @@
+import os
 import json
 
 def load_jobs(file ="Jobs.json"):
     """Load job dataset from JSON file"""
-    with open(file, "r", encoding="utf-8") as f:
+    base_dir = os.path.dirname(__file__)
+    file_path = os.path.join(base_dir,file) 
+
+    try : 
+     with open(file, "r", encoding="utf-8") as f:
         return json.load(f)
+    except FileNotFoundError:
+       print("Error: file path not found!")    
+       return{}    
 
 def match_jobs(user_skills, jobs_data, top_n=5):
     """
