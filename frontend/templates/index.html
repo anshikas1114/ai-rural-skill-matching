@@ -28,21 +28,21 @@
   </div>
 
   <!-- Results -->
-  <div class="results">
-    <h2>Matched Jobs</h2>
-    <ul>
-      <li>• (Jobs will appear here)</li>
-    </ul>
+  <div id ="results" class="results">
   </div>
 
   <!-- Illustration -->
   <div class="illustration">
-    <img src="rural-illustration.png" alt="Rural illustration" width="200">
+    <img src="{{ url_for('static', filename='rural-illustration.png') }}" alt="Rural illustration" width="200">
   </div>
 
   <!-- Footer -->
   <footer>
     © 2025 Rural Skill Matching Project
   </footer>
+
+  <!--Link Script.js -->
+
+<script src="{{ url_for('static', filename='Script.js') }}"></script>
 </body>
 </html>
