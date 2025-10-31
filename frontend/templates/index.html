@@ -24,11 +24,15 @@
     <label for="skills">Enter Your Skills</label>
     <p style="font-size: 0.9rem; margin-bottom: 10px;">Your Skills (comma separated):</p>
     <input type="text" id="skills" placeholder="e.g. weaving, stitching, painting">
-    <button>Find Jobs</button>
+    <button onclick="findJobs()">Find Jobs</button>
   </div>
 
   <!-- Results -->
-  <div id ="results" class="results">
+  <div class="results">
+    <h2>Matched Jobs</h2>
+    <ul>
+      <li>(jobs will appear here)</li>
+    </ul>
   </div>
 
   <!-- Illustration -->
@@ -43,6 +47,6 @@
 
   <!--Link Script.js -->
 
-<script src="{{ url_for('static', filename='Script.js') }}"></script>
+<script src="{{ url_for('static',filename='Script.js')}}"></script>
 </body>
 </html>

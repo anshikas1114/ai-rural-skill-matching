@@ -1,43 +1,37 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("skill-form");
-    const input = document.getElementById("skills");
-    const resultsDiv = document.getElementById("results");
+async function findJobs() {
+  const skills = document.getElementById("skills").value;
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // stop page reload
+  if (!skills) {
+    alert("Please enter at least one skill.");
+    return;
+  }
 
-        const userSkills = input.value.trim();
-        if (!userSkills) {
-            resultsDiv.innerHTML = "<p>Please enter your skills.</p>";
-            return;
-        }
+  // Show loading message
+  const resultsList = document.querySelector(".results ul");
+  resultsList.innerHTML = "<li>🔍 Searching for jobs...</li>";
 
-        try {
-            const response = await fetch("/match", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "skills=" + encodeURIComponent(userSkills)
-            });
-
-            const matches = await response.json();
-
-            if (matches.length === 0) {
-                resultsDiv.innerHTML = "<p>No matching jobs found.</p>";
-                return;
-            }
-
-            let html = "<h3>Matched Jobs:</h3><ul>";
-            matches.forEach(match => {
-                html += <li><strong>${match[0]}</strong> (Score: ${match[1]})</li>;
-            });
-            html += "</ul>";
-
-            resultsDiv.innerHTML = html;
-        } catch (error) {
-            console.error("Error:", error);
-            resultsDiv.innerHTML = "<p>Something went wrong. Please try again.</p>";
-        }
+  try {
+    const response = await fetch("/match", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ skills: skills })
     });
-});
+
+    const data = await response.json();
+
+    resultsList.innerHTML = ""; // clear loading
+
+    if (data.matches && data.matches.length > 0) {
+      data.matches.forEach(match => {
+        const li = document.createElement("li");
+        li.textContent = `${match[0]} (Matched Skills: ${match[1]})`;
+        resultsList.appendChild(li);
+      });
+    } else {
+      resultsList.innerHTML = "<li>❌ No jobs found for the given skills.</li>";
+    }
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    resultsList.innerHTML = "<li>⚠ Error connecting to server.</li>";
+  }
+}
