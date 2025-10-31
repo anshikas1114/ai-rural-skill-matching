@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from matching import load_jobs, match_jobs
 import os
 
@@ -12,7 +12,7 @@ app = Flask(
      )
 
 # Load job dataset once at startup
-jobs_data = load_jobs(os.path.join('backend','Jobs.json'))
+jobs_data = load_jobs(os.path.join(os.path.dirname(__file__), 'Jobs.json'))
 
 @app.route('/')
 def index():
@@ -21,14 +21,19 @@ def index():
 
 @app.route('/match', methods=['POST'])
 def match():
-    """Process user input and show job matches"""
-    user_skills = request.form.get("skills", "")
-    if not user_skills.strip():
-        return render_template("index.html", error="Please enter at least one skill.")
-
-    matches = match_jobs(user_skills, jobs_data)
-    return render_template("index.html", matches = matches,user_skills = user_skills)
+    """Process user skills and return job matches as JSON"""
+    data = request.get_json()
+    user_skills = data.get("skills", "")
     
+    if not user_skills.strip():
+        # Return a JSON error with a 400 Bad Request status code
+        return jsonify({"error": "Please enter at least one skill."}), 400
+    
+    matches = match_jobs(user_skills, jobs_data)
+    
+    # Return matches as a JSON object
+    return jsonify({"matches": matches})
+
 if __name__ == '__main__':
     app.run(debug=True)
 
